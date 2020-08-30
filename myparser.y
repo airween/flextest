@@ -1,11 +1,9 @@
 %{
 
-#ifdef YYDEBUG
-  yydebug = 1;
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#define YYDEBUG 1
 
 extern int yylex();
 extern int yyparse();
@@ -18,6 +16,10 @@ extern int symstackptr;
 
 void yyerror(const char* s);
 %}
+
+%define parse.trace
+
+%verbose
 
 %union {
     char *s;
@@ -32,6 +34,7 @@ void yyerror(const char* s);
 %token <s> T_INCLUDE_SOURCE
 
 %start config
+
 
 %%
 

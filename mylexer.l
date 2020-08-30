@@ -260,6 +260,10 @@ int main(int argc, char ** argv) {
         return(1);
     }
 
+#ifdef BISON_DEBUG
+    yydebug = 1;
+#endif
+
     if (argc > 2) {
         for(int i=2; i<argc; i++) {
             if (strcmp(argv[i], "lexonly") == 0) {
