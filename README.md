@@ -4,7 +4,7 @@ A simple test project to demonstrate how flex (part of GNU [bison](https://www.g
 
 ## Description
 
-The lex file (mylexer.l) contains a very simple lexical analyzer. It capable to recognize comments, "ConfKey1" and "Confkey2" directives (the list is extendable), and the "include" directive with an argument (filename). If the lexer founds an "include" line, it opens the file and continue the analysis from that point.
+The lex file (mylexer.l) contains a very simple lexical analyzer. It capable to recognize comments, "ConfKey1" and "Confkey2" directives (the list is extendable), and the "include" directive with an argument (filename). If the lexer founds an "include" line, it opens the file and continue the analysis from that point. The parser (myparser.y) contains the minimal grammar.
 
 ## Getting Started
 
@@ -21,7 +21,7 @@ To compile and test you need:
 * download the source
 * type a single `make` command
 
-This will generate the lex.yy.c C source, and the `myparser` binary.
+This will generate the lex.yy.c, myparser.tab.c C source (and the parser header), and the `myparser` binary.
 
 ### Executing program
 
@@ -44,8 +44,8 @@ The source tree contains some configs, you can check the different behaviors.
   -> Got EOF, stack_ptr: 0
   -> Closing file: config1.conf
   ```
-* then run `./myparser inctest_01.conf`. This file contains two `include` lines sequentually
-* finally, run the binary with `inctest_02.conf`, and see the differences
+* then run `./myparser inctest_01.conf`. This file contains few `include` lines sequentually
+* finally, run the binary with `inctest_02.conf`, which contains same structure with help of "*" (asterix) character.
 
 ## Authors
 

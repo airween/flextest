@@ -26,6 +26,8 @@ YY_BUFFER_STATE include_stack[32];
 char inputbuffers[32][1024];
 char filenames[32][256];
 char dirnames[32][256];
+char *symstack[5];
+int symstackptr = 0;
 
 const char default_config_directives[][50] = {
     "ConfKey1",
@@ -49,7 +51,7 @@ const char default_config_directives[][50] = {
 <INITIAL>(\s*)Conf[a-zA-Z0-9]+                    { push_sym(); return parse_config_directive(yytext); }
 <INITIAL>include                                  { push_sym(); BEGIN(ST_INCLUDE_DIRECTIVE); return T_INCLUDE; }
 <ST_INCLUDE_DIRECTIVE>[0-9A-Za-z_\/\.\-\*\:]+     { push_sym(); BEGIN(INITIAL); parse_config_include(yytext); return T_INCLUDE_SOURCE; }
-<ST_CONFIG_DIRECTIVE>((?:\\\ |[^\ \t\n])+)        { push_sym(); return T_CONFIG_DIRECTIVE_ARGUMENT; }
+<ST_CONFIG_DIRECTIVE>((?:\\\ |[^'\ \t\n])+)       { push_sym(); return T_CONFIG_DIRECTIVE_ARGUMENT; }
   /* END Simple configuration directives */
 
 \#.*[^\r\n]             { push_sym(); return T_COMMENT; }
@@ -62,7 +64,7 @@ const char default_config_directives[][50] = {
               }  
 
 <*>[ \t]      {  }
-<*>.|\n|\r\n  { char state[50]; get_state(state); printf("UNKNOWN TOKEN: '%s' in file: %s, line %zu, state: %s\n", yytext, filenames[include_stack_ptr], lineno+1, state); return T_UNKNOWN; }
+<*>.|\n|\r\n  { char state[50]; get_state(state); printf("UNKNOWN TOKEN: '%s' in file: %s, line %zu, state: %s\n", yytext, filenames[include_stack_ptr], lineno+1, state); close_and_cleanup(1); }
 <<EOF>>       {
                 // {}
                 include_stack_ptr--;
@@ -111,6 +113,7 @@ void push_sym() {
         if (yylval.s[strlen(yytext)-1] == '\n') {
             yylval.s[strlen(yytext)-1] = '\0';
         }
+        symstack[symstackptr++] = yylval.s;
     }
     if (debug == 1) {
         char state[20];
